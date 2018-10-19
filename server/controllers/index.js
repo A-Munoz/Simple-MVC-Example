@@ -59,7 +59,7 @@ const hostPage3 = (req, res) => {
   res.render('page3');
 };
 const hostPage4 = (req, res) => {
-   const callback = (err, docs) => {
+  const callback = (err, docs) => {
     if (err) {
       return res.json({ err }); // if error, return it
     }
@@ -112,22 +112,15 @@ const searchName = (req, res) => {
     if (!doc) {
       return res.json({ error: 'No dogs found' });
     }
-    if (doc.age !== '') {
-      doc.age = req.query.age;
-    }
-
-    return res.json({ name: doc.dog, breed: doc.breed, age: doc.age });
+    const dogUpdate = doc;
+    dogUpdate.age++;
+      
+    const savePromise = dogUpdate.save();
+      
+    return savePromise.then(() => res.json({ name: dogUpdate.name, breed: dogUpdate.breed, age: dogUpdate.age })savePromise.catch((err) => res.json({err}));); 
   });
 };
 
-const updateLast = (req, res) => {
-  lastAdded.age++;
-
-  const savePromise = lastAdded.save();
-  savePromise.then(() => res.json({ name: lastAdded.name, breed: lastAdded.breed, age: lastAdded.age }));
-
-  savePromise.catch(err => res.json({ err }));
-};
 
 const notFound = (req, res) => {
   res.status(404).render('notFound', {
@@ -144,7 +137,6 @@ module.exports = {
   readDog,
   getName,
   setName,
-  updateLast,
   searchName,
   notFound,
 };
